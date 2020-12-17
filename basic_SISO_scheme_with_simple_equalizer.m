@@ -246,10 +246,12 @@ PSD_UFMC  = PSD_UFMC  + abs(fft(s_UFMC)/sqrt(N_UFMC)).^2;
         noise       = sqrt(Pn_time/2)*(randn(N,1)+1j*randn(N,1));
             
         r_FBMC  = r_FBMC_noNoise  + noise(1:N_FBMC);
-        r_OFDM  = r_OFDM_noNoise  + noise(1:N_OFDM);
-        r_WOLA  = r_WOLA_noNoise  + noise(1:N_WOLA);
-        r_FOFDM = r_FOFDM_noNoise + noise(1:N_FOFDM);
-        r_UFMC  = r_UFMC_noNoise  + noise(1:N_UFMC);
+        % ¬о всех сигналах кроме FBMC почему то по€вл€лс€ лишний отсчет
+        % после прохождени€ канала
+        r_OFDM  = r_OFDM_noNoise(1:N_OFDM)  + noise(1:N_OFDM);
+        r_WOLA  = r_WOLA_noNoise(1:N_WOLA)  + noise(1:N_WOLA);
+        r_FOFDM = r_FOFDM_noNoise(1:N_FOFDM) + noise(1:N_FOFDM);
+        r_UFMC  = r_UFMC_noNoise(1:N_UFMC)  + noise(1:N_UFMC);
        
         % ƒемодул€ци€ сигналов
         y_FBMC  =  FBMC.Demodulation(r_FBMC);
