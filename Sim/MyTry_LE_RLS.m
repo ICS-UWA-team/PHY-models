@@ -14,7 +14,7 @@ NumberOfSymbolsInTime = 50; % 50
 Subcarrier_Spacing = 20; %10, 5
 SamplingRate = Number_of_carriers*Subcarrier_Spacing*4;
 dt = 1/SamplingRate;
-% Simulation_SNR_dB = 0;
+% Simulation_SNR_dB = 10;
 Simulation_SNR_dB = 0:5:50; % SNR for OFDM in dB. The average transmit power of all methods is the same! However, the SNR might be different due to filtering (in FOFDM and UFMC) or because a different bandwidth is used (different subcarrier spacing or different number of subcarriers).          
 f_central = 35000;
 pilot_sep_freq = 2;
@@ -83,24 +83,20 @@ Ps_FBMC   = zeros(N_FBMC, 1);
 % Pre-allocate Power Spectral Density
 PSD_FBMC  = zeros(N_FBMC, 1);
 
-% BER_eq ={};
-% num_eq = 1;
-% plot_sign = ["MyEq"];
-
-
 %% Creating cell array of equalizers for each subcarrier
-plot_sign = ["LE_RLS"; "DFE_RLS"; "LE_LMS"; "DFE_LMS"; "APF"];% "LE_CMA"; "DFE_CMA"];%; "MLSE"];
+plot_sign = ["LE_RLS_1"; "LE_RLS_2"; "LE_RLS_3"; "LE_RLS_4"; "LE_RLS_5"; "LE_RLS_6"; "LE_RLS_7"; "LE_RLS_8"; "LE_RLS_9"; "LE_RLS_10"];
 num_eq = length(plot_sign);
-eq_LE_RLS = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 1, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
-eq_DFE_RLS = comm.DecisionFeedbackEqualizer('Algorithm', 'RLS', 'NumForwardTaps', 1, 'NumFeedbackTaps', 1, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
-eq_LE_LMS = comm.LinearEqualizer('Algorithm', 'LMS', 'NumTaps', 1, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
-eq_DFE_LMS = comm.DecisionFeedbackEqualizer('Algorithm', 'LMS', 'NumForwardTaps', 1, 'NumFeedbackTaps', 1, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
-eq_APF = dsp.AffineProjectionFilter(1);
-% eq_LE_CMA = comm.LinearEqualizer('Algorithm', 'CMA', 'NumTaps', 3, 'ForgettingFactor', 0.9, 'ReferenceTap', 1);
-% eq_DFE_CMA = comm.DecisionFeedbackEqualizer('Algorithm', 'CMA', 'NumForwardTaps', 4, 'NumFeedbackTaps', 2, 'ForgettingFactor', 0.9, 'ReferenceTap', 1);
-% const = [-1+1j; -1-1j; 1+1j; 1-1j]./sqrt(2);
-% eq_MLSE = comm.MLSEEqualizer('Constellation', const);
-eq_array = {eq_LE_RLS; eq_DFE_RLS; eq_LE_LMS; eq_DFE_LMS; eq_APF}; % eq_LE_CMA; eq_DFE_CMA};%; eq_MLSE};
+eq_LE_RLS_1 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 1, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_2 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 2, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_3 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 3, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_4 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 4, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_5 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 5, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_6 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 6, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_7 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 7, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_8 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 8, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_9 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 9, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_LE_RLS_10 = comm.LinearEqualizer('Algorithm', 'RLS', 'NumTaps', 10, 'ForgettingFactor', 0.25, 'ReferenceTap', 1);
+eq_array = {eq_LE_RLS_1; eq_LE_RLS_2; eq_LE_RLS_3; eq_LE_RLS_4; eq_LE_RLS_5; eq_LE_RLS_6; eq_LE_RLS_7; eq_LE_RLS_8; eq_LE_RLS_9; eq_LE_RLS_10};
 BER_FBMC_Equalized = zeros(num_eq, length(Simulation_SNR_dB), Simulation_MonteCarloRepetitions);
 for j=2:Number_of_carriers
     for k=1:num_eq
@@ -140,8 +136,9 @@ for i_rep = 1:Simulation_MonteCarloRepetitions
         SNR_dB = Simulation_SNR_dB(i_SNR);
         Pn_time = 1/FBMC.GetSymbolNoisePower(1)*10^(-SNR_dB/10);
         noise = sqrt(Pn_time/2)*(randn(N,1)+1j*randn(N,1));
-            
+        
         r_FBMC  = r_FBMC_noNoise  + noise(1:N_FBMC);
+
         % Демодуляция сигналов
         y_FBMC  =  FBMC.Demodulation(r_FBMC);
         memory_Y{i_rep, i_SNR} = y_FBMC;
@@ -149,11 +146,9 @@ for i_rep = 1:Simulation_MonteCarloRepetitions
         for k=1:num_eq
             % Эквализация
 %         myEqualizers;
-        if k >5
-            y_Equalized_FBMC = Simple_Equalazer(x_FBMC, y_FBMC, eq_array(k,:), false);
-        else
-            y_Equalized_FBMC = Simple_Equalazer(x_FBMC, y_FBMC, eq_array(k,:), true);
-        end
+
+        y_Equalized_FBMC = Simple_Equalazer(x_FBMC, y_FBMC, eq_array(k,:), true);
+
         
         memory_Y_eq{i_rep, i_SNR} = y_Equalized_FBMC;
 
@@ -163,7 +158,7 @@ for i_rep = 1:Simulation_MonteCarloRepetitions
 
         % Calculate the BER
         % with pilots
-%         BER_FBMC_Equalized(k, i_SNR, i_rep)   = mean( BinaryDataStream_FBMC(ChannelEstimation.PilotMatrix==0)...
+%         BER_FBMC_Equalized(i_SNR, i_rep)   = mean( BinaryDataStream_FBMC(ChannelEstimation.PilotMatrix==0)...
 %             ~=DetectedBitStream_Equalized_FBMC(ChannelEstimation.PilotMatrix==0));
         % without pilots
         BER_FBMC_Equalized(k, i_SNR, i_rep)   = mean( BinaryDataStream_FBMC~=DetectedBitStream_Equalized_FBMC);
