@@ -84,12 +84,14 @@ Ps_FBMC   = zeros(N_FBMC, 1);
 PSD_FBMC  = zeros(N_FBMC, 1);
 
 %% Creating cell array of equalizers for each subcarrier
+% plot_sign = ["APF"];
 % plot_sign = ["APF_DMI"; "APF_RMU"];
 plot_sign = ["APF_1"; "APF_2"; "APF_3"; "APF_4"; "APF_5"; "APF_6"; "APF_7"; "APF_8"; "APF_9"; "APF_10"];
 num_eq = length(plot_sign);
 % eq_APF_DMI = dsp.AffineProjectionFilter(1, 'Method', 'Direct Matrix Inversion');
 % eq_APF_RMU = dsp.AffineProjectionFilter(1, 'Method', 'Recursive Matrix Update');
 % eq_APF_BDMI = dsp.AffineProjectionFilter(2, 'Method', 'Block Direct Matrix Inversion');
+% eq_APF = dsp.AffineProjectionFilter('Length', 1, 'StepSize', 1, 'ProjectionOrder', 2, 'InitialOffsetCovariance', 0.05);
 eq_APF_1 = dsp.AffineProjectionFilter(1);
 eq_APF_2 = dsp.AffineProjectionFilter(2);
 eq_APF_3 = dsp.AffineProjectionFilter(3);
@@ -101,6 +103,7 @@ eq_APF_8 = dsp.AffineProjectionFilter(8);
 eq_APF_9 = dsp.AffineProjectionFilter(9);
 eq_APF_10 = dsp.AffineProjectionFilter(10);
 % eq_array = {eq_APF_DMI; eq_APF_RMU};
+% eq_array = {eq_APF};
 eq_array = {eq_APF_1; eq_APF_2; eq_APF_3; eq_APF_4; eq_APF_5; eq_APF_6; eq_APF_7; eq_APF_8; eq_APF_9; eq_APF_10};
 BER_FBMC_Equalized = zeros(num_eq, length(Simulation_SNR_dB), Simulation_MonteCarloRepetitions);
 for j=2:Number_of_carriers

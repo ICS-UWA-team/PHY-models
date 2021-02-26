@@ -24,7 +24,7 @@ plot_sign = "MyEq_" + string(tfps);
 BER_FBMC_Equalized = zeros(num_eq, 11, Simulation_MonteCarloRepetitions);
 for fps=tfps
 pilot_sep_freq = fps;
-pilot_sep_time = 3;
+pilot_sep_time = 1;
 
 % Number of Monte Carlo repetitions over which we take the average
 memory_X = {};
@@ -133,7 +133,8 @@ for i_rep = 1:Simulation_MonteCarloRepetitions
 
             % Ёквализаци€
         CEPM = ChannelEstimationQ.PilotMatrix;
-        y_Equalized_FBMC = myEqualizers_func(y_FBMC, x_FBMC, i_SNR, Number_of_carriers, NumberOfSymbolsInTime, CEPM, pilot_sep_time);
+        param = 0;
+        y_Equalized_FBMC = myEqualizers_func(y_FBMC, x_FBMC, i_SNR, Number_of_carriers, NumberOfSymbolsInTime, CEPM, pilot_sep_time, param);
         
         memory_Y_eq{i_rep, i_SNR} = y_Equalized_FBMC;
 

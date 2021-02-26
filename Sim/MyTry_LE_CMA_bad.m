@@ -86,7 +86,7 @@ PSD_FBMC  = zeros(N_FBMC, 1);
 %% Creating cell array of equalizers for each subcarrier
 plot_sign = ["LE_CMA"];
 num_eq = length(plot_sign);
-eq_LE_CMA = comm.LinearEqualizer('Algorithm', 'CMA', 'NumTaps', 1, 'ForgettingFactor', 0.9, 'ReferenceTap', 1);
+eq_LE_CMA = comm.LinearEqualizer('Algorithm', 'CMA', 'NumTaps', 1, 'StepSize', 0.03, 'ReferenceTap', 1);
 eq_array = {eq_LE_CMA};
 BER_FBMC_Equalized = zeros(num_eq, length(Simulation_SNR_dB), Simulation_MonteCarloRepetitions);
 for j=2:Number_of_carriers

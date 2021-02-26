@@ -1,4 +1,4 @@
-function y_Equalized = myEqualizers_func(y_FBMC, x_FBMC, i_SNR, Number_of_carriers, NumberOfSymbolsInTime, CEPM, pilot_sep_time)
+function y_Equalized = myEqualizers_func(y_FBMC, x_FBMC, i_SNR, Number_of_carriers, NumberOfSymbolsInTime, CEPM, pilot_sep_time, param)
 %% Pilots
 h_pilot = zeros(Number_of_carriers, NumberOfSymbolsInTime);
 H_pilot = zeros(Number_of_carriers, NumberOfSymbolsInTime);
@@ -23,10 +23,13 @@ if pilot_sep_time > 1
 end
 %% LS equalization
 % y_Equalized  =  y_FBMC./H_pilot;
-%% ZF equalization (по виду тоже самое что и LS)
-% [y_Equalized, csiZF] = lteEqualizeZF(y_FBMC, H_pilot);
-%% MMSE equalization (хм... работает не лучше чем LS)
-[y_Equalized, csiMMSE] = lteEqualizeMMSE(y_FBMC, H_pilot, i_SNR);
+if param == 0
+    %% MMSE equalization (хм... работает не лучше чем LS)
+    y_Equalized = lteEqualizeMMSE(y_FBMC, H_pilot, i_SNR);
+elseif param == 1
+    %% ZF equalization (по виду тоже самое что и LS)
+    y_Equalized = lteEqualizeZF(y_FBMC, H_pilot);
+end
 %% Full equalization (all - pilots)
 %H_real = y_FBMC./x_FBMC;
 %y_Equalized  =  y_FBMC./H_real;  
